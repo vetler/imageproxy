@@ -1,0 +1,10 @@
+steps:
+  - name: "gcr.io/k8s-skaffold/pack"
+    args:
+      - build
+      - --builder
+      - heroku/builder:22 # Check this builder for Go 1.22 support
+      - europe-central2-docker.pkg.dev/reprice-343607/reprice/imageproxy
+
+images:
+  - "europe-central2-docker.pkg.dev/reprice-343607/reprice/imageproxy"
