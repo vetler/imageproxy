@@ -135,7 +135,6 @@ func (tc *tieredCache) String() string {
 
 func (tc *tieredCache) Set(value string) error {
 	for _, v := range strings.Fields(value) {
-		log.Printf("cache: %s", v)
 		c, err := parseCache(v)
 		if err != nil {
 			return err
