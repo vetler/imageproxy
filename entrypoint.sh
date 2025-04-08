@@ -12,7 +12,7 @@ if [ -n "$SIGNATURE_KEY" ]; then
 fi
 
 # Log the startup command explicitly to stdout
-echo "Starting imageproxy with command: $CMD" >&1
+echo "Starting imageproxy with command: $CMD"
 
 # Execute the command
 exec $CMD
