@@ -18,7 +18,10 @@ FROM cgr.dev/chainguard/static:latest
 
 COPY --from=build /app/imageproxy /app/imageproxy
 
-CMD ["-addr", "0.0.0.0:8080"]
-ENTRYPOINT ["/app/imageproxy"]
+# Add a startup script
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 EXPOSE 8080
