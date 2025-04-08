@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.4
-FROM --platform=$BUILDPLATFORM cgr.dev/chainguard/wolfi-base as build
+FROM --platform=$BUILDPLATFORM cgr.dev/chainguard/wolfi-base AS build
 LABEL maintainer="Will Norris <will@willnorris.com>"
 
 RUN apk update && apk add build-base git openssh go-1.21
