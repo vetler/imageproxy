@@ -355,10 +355,13 @@ func contentTypeMatches(patterns []string, contentType string) bool {
 // hostMatches returns whether the host in u matches one of hosts.
 func hostMatches(hosts []string, u *url.URL) bool {
 	for _, host := range hosts {
+		log.Printf("checking host %q against %q", u.Hostname(), host)
 		if u.Hostname() == host {
+			log.Printf("host %q matches %q", u.Hostname(), host)
 			return true
 		}
 		if strings.HasPrefix(host, "*.") && strings.HasSuffix(u.Hostname(), host[2:]) {
+			log.Printf("host %q matches %q", u.Hostname(), host)
 			return true
 		}
 		// Checks whether the host in u is an IP
@@ -380,6 +383,7 @@ func hostMatches(hosts []string, u *url.URL) bool {
 func referrerMatches(hosts []string, r *http.Request) bool {
 	u, err := url.Parse(r.Header.Get("Referer"))
 	if err != nil { // malformed or blank header, just deny
+		log.Printf("error parsing referrer %q: %v", r.Header.Get("Referer"), err)
 		return false
 	}
 
