@@ -18,6 +18,6 @@ FROM cgr.dev/chainguard/static:latest
 
 COPY --from=build /app/imageproxy /app/imageproxy
 
-ENTRYPOINT ["/app/imageproxy", "-addr", "0.0.0.0:8080", "-signatureKey", "${SIGNATURE_KEY}"]
+ENTRYPOINT ["/app/imageproxy", "-signatureKey", "${SIGNATURE_KEY}"]
 
 EXPOSE 8080
