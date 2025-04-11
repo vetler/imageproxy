@@ -33,6 +33,11 @@ import (
 // Maximum number of redirection-followings allowed.
 const maxRedirects = 10
 
+const (
+	maxRetries    = 3
+	retryInterval = 100 * time.Millisecond
+)
+
 // Proxy serves image requests.
 type Proxy struct {
 	Client *http.Client // client used to fetch remote URLs
@@ -209,8 +214,8 @@ func (p *Proxy) serveImage(w http.ResponseWriter, r *http.Request) {
 			return http.ErrUseLastResponse
 		}
 	}
-	resp, err := p.Client.Do(actualReq)
 
+	resp, err := p.doRequestWithRetries(actualReq)
 	if err != nil {
 		msg := fmt.Sprintf("error fetching remote image: %v", err)
 		p.log(msg)
@@ -218,7 +223,6 @@ func (p *Proxy) serveImage(w http.ResponseWriter, r *http.Request) {
 		metricRemoteErrors.Inc()
 		return
 	}
-	// close the original resp.Body, even if we wrap it in a NopCloser below
 	defer resp.Body.Close()
 
 	// return early on 404s.  Perhaps handle additional status codes here?
@@ -257,7 +261,7 @@ func (p *Proxy) serveImage(w http.ResponseWriter, r *http.Request) {
 		p.logf("response content-length: %d", resp.ContentLength)
 		p.logf("response status: %s", resp.Status)
 		p.logf("response status code: %d", resp.StatusCode)
-		
+
 		p.logf("content-type not allowed: %q for %s", contentType, req.URL.String())
 		http.Error(w, msgNotAllowed, http.StatusForbidden)
 		return
@@ -537,4 +541,40 @@ func (t *TransformingTransport) RoundTrip(req *http.Request) (*http.Response, er
 	buf.Write(img)
 
 	return http.ReadResponse(bufio.NewReader(buf), req)
+}
+
+// doRequestWithRetries handles retries for HTTP requests.
+func (p *Proxy) doRequestWithRetries(req *http.Request) (*http.Response, error) {
+	var resp *http.Response
+	var err error
+
+	for attempt := 0; attempt <= maxRetries; attempt++ {
+		if attempt > 0 {
+			time.Sleep(retryInterval * time.Duration(attempt))
+			p.logf("Retry attempt %d for %s", attempt, req.URL)
+		}
+
+		resp, err = p.Client.Do(req)
+		if err != nil {
+			continue
+		}
+
+		// Retry on server errors (500s) and specific client errors
+		if resp.StatusCode == http.StatusOK {
+			return resp, nil
+		}
+
+		if resp.StatusCode >= 500 || resp.StatusCode == http.StatusTooManyRequests {
+			resp.Body.Close()
+			continue
+		}
+
+		// Don't retry on other client errors or redirects
+		return resp, nil
+	}
+
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }
