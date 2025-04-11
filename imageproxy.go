@@ -479,11 +479,12 @@ type TransformingTransport struct {
 
 // RoundTrip implements the http.RoundTripper interface.
 func (t *TransformingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	log.Printf("Request URL: %s", req.URL.String())
 	if req.URL.Fragment == "" {
 		// normal requests pass through
-		if t.log != nil {
+		//if t.log != nil {
 			t.log("fetching remote URL: %v", req.URL)
-		}
+		//}
 		return t.Transport.RoundTrip(req)
 	}
 
