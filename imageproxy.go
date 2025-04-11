@@ -251,6 +251,13 @@ func (p *Proxy) serveImage(w http.ResponseWriter, r *http.Request) {
 		contentType = peekContentType(b)
 	}
 	if resp.ContentLength != 0 && !contentTypeMatches(p.ContentTypes, contentType) {
+		// log more response headers for debugging
+		p.logf("response headers: %v", resp.Header)
+		p.logf("response content-type: %q", contentType)
+		p.logf("response content-length: %d", resp.ContentLength)
+		p.logf("response status: %s", resp.Status)
+		p.logf("response status code: %d", resp.StatusCode)
+		
 		p.logf("content-type not allowed: %q for %s", contentType, req.URL.String())
 		http.Error(w, msgNotAllowed, http.StatusForbidden)
 		return
