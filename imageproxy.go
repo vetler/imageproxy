@@ -251,7 +251,7 @@ func (p *Proxy) serveImage(w http.ResponseWriter, r *http.Request) {
 		contentType = peekContentType(b)
 	}
 	if resp.ContentLength != 0 && !contentTypeMatches(p.ContentTypes, contentType) {
-		p.logf("content-type not allowed: %q", contentType)
+		p.logf("content-type not allowed: %q for %s", contentType, req.URL.String())
 		http.Error(w, msgNotAllowed, http.StatusForbidden)
 		return
 	}
@@ -483,7 +483,7 @@ func (t *TransformingTransport) RoundTrip(req *http.Request) (*http.Response, er
 	if req.URL.Fragment == "" {
 		// normal requests pass through
 		//if t.log != nil {
-			t.log("fetching remote URL: %v", req.URL)
+		t.log("fetching remote URL: %v", req.URL)
 		//}
 		return t.Transport.RoundTrip(req)
 	}
