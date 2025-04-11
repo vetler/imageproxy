@@ -340,7 +340,6 @@ func NewRequest(r *http.Request, baseURL *url.URL) (*Request, error) {
 	var err error
 	req := &Request{Original: r}
 
-	log.Println("Request URL:", r.URL.String())
 	path := r.URL.EscapedPath()[1:] // strip leading slash
 	req.URL, err = parseURL(path)
 	if err != nil || !req.URL.IsAbs() {
@@ -373,7 +372,6 @@ func NewRequest(r *http.Request, baseURL *url.URL) (*Request, error) {
 
 	// query string is always part of the remote URL
 	req.URL.RawQuery = r.URL.RawQuery
-	log.Println("Parsed URL:", req.URL.String())
 	return req, nil
 }
 
