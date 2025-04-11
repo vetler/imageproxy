@@ -373,6 +373,7 @@ func NewRequest(r *http.Request, baseURL *url.URL) (*Request, error) {
 
 	// query string is always part of the remote URL
 	req.URL.RawQuery = r.URL.RawQuery
+	log.Println("Parsed URL:", req.URL.String())
 	return req, nil
 }
 
