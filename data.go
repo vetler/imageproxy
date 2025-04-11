@@ -5,7 +5,6 @@ package imageproxy
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"regexp"
