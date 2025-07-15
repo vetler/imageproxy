@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.4
-FROM --platform=$BUILDPLATFORM cgr.dev/chainguard/wolfi-base as build
+FROM cgr.dev/chainguard/wolfi-base AS build
 LABEL maintainer="Will Norris <will@willnorris.com>"
 
 RUN apk update && apk add build-base git openssh go-1.24
@@ -18,7 +18,6 @@ FROM cgr.dev/chainguard/static:latest
 
 COPY --from=build /app/imageproxy /app/imageproxy
 
-CMD ["-addr", "0.0.0.0:8080"]
 ENTRYPOINT ["/app/imageproxy"]
 
 EXPOSE 8080

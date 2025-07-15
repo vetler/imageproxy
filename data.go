@@ -242,13 +242,8 @@ func (o Options) transform() bool {
 //
 // The "trim" option will automatically trim pixels of the same color around
 // the edges of the image.  This is useful for removing borders from images
-// that have been resized or cropped.  The trim option is applied before other
-// options such as cropping or resizing.
-//
-// # Valid Until
-//
-// The "vu{unixtime}" option specifies a Unix timestamp at which the request URL is no longer valid.
-// For example, "vu1800000000" would mean the URL is valid until 2027-01-15T08:00:00Z.
+// that have been resized or cropped.  The trim option is applied after any
+// cropping or resizing has been performed.
 //
 // Examples
 //
